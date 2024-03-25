@@ -6,11 +6,12 @@ from VisualizeDataset import plot_tranformed_images, get_image_path_list
 from torchvision import datasets
 from pathlib import Path
 from torch.utils.data import DataLoader
-
+from torch import nn
 image_path = Path("data")
 train_dir = image_path / "train"
 test_dir = image_path / "test"
 BATCH_SIZE = 32
+device = "cuda" if torch.cuda.is_available() else "cpu"
 # Transform data into tensors(numerical representation of images)
 # docs : https://pytorch.org/vision/stable/transforms.html
 # visualized docs: https://pytorch.org/vision/main/auto_examples/transforms/plot_transforms_illustrations.html
@@ -64,7 +65,69 @@ test_transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-plot_tranformed_images(image_paths=get_image_path_list(),
-                       tranform=train_transform,
-                       n=3,
-                       seed=None)
+ # Visualization
+# plot_tranformed_images(image_paths=get_image_path_list(),
+#                        tranform=train_transform,
+#                        n=3,
+#                        seed=None)
+
+
+# Start Building Model
+class SkinCancerClassification(nn.Module):
+    def __init__(self,
+                 input_shape:int,
+                 hidden_units:int,
+                 output_shape:int):
+        super().__init__()
+        self.conv_block_1 = nn.Sequential(
+            nn.Conv2d(in_channels=input_shape,
+                      out_channels=hidden_units,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=hidden_units,
+                      out_channels=hidden_units,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2,
+                         stride=2)
+        )
+        self.conv_block_2 = nn.Sequential(
+            nn.Conv2d(in_channels=hidden_units,
+                      out_channels=hidden_units,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=hidden_units,
+                      out_channels=hidden_units,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2,
+                         stride=2)
+        )
+        self.classifier = nn.Sequential(
+            nn.Flatten(), # Turn outputs into feature vector
+            nn.Linear(in_features=hidden_units,
+                      out_features=output_shape)
+        )
+    def forward(self, x):
+        x = self.conv_block_1(x)
+        print(x)
+        x = self.conv_block_2(x)
+        print(x)
+        x = self.classifier(x)
+        print(x)
+        return x
+
+torch.manual_seed(42)
+model = SkinCancerClassification(input_shape=3, # number of color channels in image
+                                 hidden_units=64,
+                                 output_shape=len(class_names)).to(device)
+
+
