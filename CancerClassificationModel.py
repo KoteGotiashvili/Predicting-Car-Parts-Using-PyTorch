@@ -7,6 +7,9 @@ from torchvision import datasets
 from pathlib import Path
 from torch.utils.data import DataLoader
 from torch import nn
+from torchinfo import summary
+
+
 image_path = Path("data")
 train_dir = image_path / "train"
 test_dir = image_path / "test"
@@ -45,11 +48,10 @@ class_dict = train_data.class_to_idx # get as dictionary
 # Turn loaded images into DataLoaders, turn into iterables, specify batch size
 train_dataloader = DataLoader(dataset=train_data,
                               batch_size=BATCH_SIZE,
-                              num_workers=os.cpu_count()//2,# How many cpu cors used to load data, all count divide by 2
+                              # num_workers=os.cpu_count()//2,# How many cpu cors used to load data, all count divide by 2
                               shuffle=True) # shuffle order
 test_dataloader=DataLoader(dataset=test_data,
                            batch_size=BATCH_SIZE,
-                           num_workers=os.cpu_count()//2,
                            shuffle=False) # Order
 # Other forms of transforms -> Data Augmentation -> Change image location, bright, colors, rotation -
 # adding slightly modified copies helps to learn better AKA Data Augmentation
@@ -113,16 +115,16 @@ class SkinCancerClassification(nn.Module):
         )
         self.classifier = nn.Sequential(
             nn.Flatten(), # Turn outputs into feature vector
-            nn.Linear(in_features=hidden_units,
+            nn.Linear(in_features=hidden_units * 16 * 16,
                       out_features=output_shape)
         )
     def forward(self, x):
         x = self.conv_block_1(x)
-        print(x)
+        # print(x.shape)
         x = self.conv_block_2(x)
-        print(x)
+        # print(x.shape)
         x = self.classifier(x)
-        print(x)
+        # print(x.shape)
         return x
 
 torch.manual_seed(42)
@@ -130,4 +132,10 @@ model = SkinCancerClassification(input_shape=3, # number of color channels in im
                                  hidden_units=64,
                                  output_shape=len(class_names)).to(device)
 
-
+# Test model, dummy forward pass
+image_batch, label_batch = next(iter(train_dataloader))
+image_batch, label_batch = image_batch.to(device), label_batch.to(device)
+print(image_batch.shape, label_batch.shape)
+# Try forward pass
+model(image_batch)
+summary(model, input_size=[1,3,64,64])
