@@ -4,6 +4,11 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+# create dictionary of results
+results = {"train_loss": [],
+           "train_acc": [],
+           "test_loss": [],
+           "test_acc": []}
 # Train step takes in a model and dataloader and trains the model on the dataloader
 def step_train(model: torch.nn.Module,
           dataloader: DataLoader,
@@ -64,7 +69,7 @@ def step_test(model: torch.nn.Module,
     # Turn inference mode(Remove unnecessary stuff)
     with torch.inference_mode():
         # Loop thorugh data batches
-        for batch, (X,Y) in enumerate(dataloader):
+        for batch, (X,y) in enumerate(dataloader):
             # Sent data to the target device
             X, y = X.to(device), y.to(device)
 
@@ -93,11 +98,6 @@ def train(model: torch.nn.Module,
           epochs: int=5 ,
           device=device):
 
-    # create dictionary of results
-    results = {"train_loss": [],
-               "train_acc": [],
-               "test_loss": [],
-               "test_acc": []}
 
     for epoch in tqdm(range(epochs)):
         train_loss, train_acc = step_train(model=model,
@@ -110,7 +110,7 @@ def train(model: torch.nn.Module,
                                         loss_fn=loss_fn,
                                         device=device)
         # Print results
-        print(f" Epocj {epoch} | Train Loss: {train_loss:.5f} | Train Acc: {train_acc:.5f} | Test Loss: {test_loss:.5f} | Test Acc: {test_acc:.5f} ")
+        print(f" Epoch {epoch} | Train Loss: {train_loss:.5f} | Train Acc: {train_acc:.5f} | Test Loss: {test_loss:.5f} | Test Acc: {test_acc:.5f} ")
 
         # update results dictionary
         results["train_loss"].append(train_loss)
@@ -124,4 +124,6 @@ def train(model: torch.nn.Module,
 
 
 
+def get_results():
+    return results
 
