@@ -1,6 +1,6 @@
 # Deep Learning Model for Skin Cancer Classification
 
-## This project tackles skin cancer classification using a deep learning model built with PyTorch. The model is trained to distinguish between nine distinct skin cancer classes with a dataset of approximately 2,300 images.
+## This project tackles car parts classification using a deep learning model built with PyTorch. The model is trained to distinguish between 50 distinct car parts.
 
 Key Technologies:
 
