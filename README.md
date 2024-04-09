@@ -1,4 +1,4 @@
-# Deep Learning Model for Skin Cancer Classification (AWS Deployment) 
+# Deep Learning Model for Skin Cancer Classification
 
 ## This project tackles skin cancer classification using a deep learning model built with PyTorch. The model is trained to distinguish between nine distinct skin cancer classes with a dataset of approximately 2,300 images.
 
@@ -8,7 +8,7 @@ Key Technologies:
 
  * Matplotlib & Pandas: Data visualization and manipulation libraries.
 
- * NumPy: For computation purpose.
+ * NumPy: For computation purposes.
 
 
 
@@ -16,7 +16,7 @@ Key Technologies:
 ![Alt text](explainer.jpg)
 
 Introduction:
-This project aims to classify different parts of cars using Convolutional Neural Networks (CNN). With the help of Kaggle dataset, we'll train our model to recognize 50 distinct car parts.
+This project aims to classify different parts of cars using Convolutional Neural Networks (CNN). With the help of the Kaggle dataset, we'll train our model to recognize 50 distinct car parts.
 
 Architecture Overview:
 The architecture of our CNN model consists of two main blocks. These blocks are designed to extract features from the input images and learn the patterns associated with each car part. After training for 100 epochs, the model is expected to achieve an accuracy ranging from 70% to over 90%.
